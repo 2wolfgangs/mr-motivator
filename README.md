@@ -1,0 +1,4 @@
+mr-motivator
+============
+
+Momentum Analysis
