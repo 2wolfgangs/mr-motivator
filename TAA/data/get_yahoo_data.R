@@ -4,25 +4,21 @@
 
 # Asset Class   Yahoo Ticker  Yahoo data from
 # ------------- ------------- ---------------
-# Commodities	    DBC	        6/02/2006
-# Gold	          GLD       	18/11/2004
 # U.S. Stocks	    SPY         29/01/1993
 # All world	      VGTSX	      31/12/1998
 # Japan	          EWJ	        1/04/1996
 # EM	            VEIEX	      12/09/1995
-# Intl REIT 	    RWX	        2/03/2007
 # US Real Estate	VGSIX	      28/06/1996
 # Intmed Treasury	VFIUX	      23/02/2001
 # Long Treasury	  VUSTX	      14/12/1989
 # Short Treasury	VFSIX	      16/10/1997
 
-tickers <- c('DBC','GLD','SPY','VGTSX','EWJ','VEIEX', 'RWX',
-             'VGSIX','VFIUX','VUSTX','VFSIX')
+tickers <- c('SPY','VGTSX','EWJ','VEIEX','VGSIX','VFIUX','VUSTX','VFSIX')
 
 # Put all the yahoo data in its own environment,
 # so we can munge it separately and more efficiently.
 raw.yahoo.data <- new.env()
 
 # Read data into yahoodata environment using quantmod
-getSymbols(tickers, src = 'yahoo', from = '1990-01-01', env = raw.yahoo.data, 
+getSymbols(tickers, src = 'yahoo', from = '1990-01-01', to = '2013-08-30', env = raw.yahoo.data, 
            auto.assign = T)

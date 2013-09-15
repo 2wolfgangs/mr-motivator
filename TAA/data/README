@@ -3,29 +3,28 @@ Online Data
 
 The get_yahoo_data.R script gets the following daily OHLC price data (all USD) from yahoo.
 
-Asset Class   Yahoo Ticker	Yahoo data from
-Commodities	    DBC	        6/02/2006
-Gold	          GLD       	18/11/2004
-U.S. Stocks	    SPY         29/01/1993
-All world	      VGTSX	      31/12/1998
-Japan	          EWJ	        1/04/1996
-EM	            VEIEX	      12/09/1995
-Intl REIT 	    RWX	        2/03/2007
-US Real Estate	VGSIX	      28/06/1996
-Intmed Treasury	VFIUX	      23/02/2001
-Long Treasury	  VUSTX	      14/12/1989
-Short Treasury	VFSIX	      16/10/1997
+Asset Class   Yahoo Ticker	Yahoo data 
+U.S. Stocks	    SPY         29/01/1993 - 30/8/2013
+All world	      VGTSX	      31/12/1998 - 30/8/2013
+Japan	          EWJ	        1/04/1996  - 30/8/2013
+EM	            VEIEX	      12/09/1995 - 30/8/2013
+US Real Estate	VGSIX	      28/06/1996 - 30/8/2013
+Intmed Treasury	VFIUX	      23/02/2001 - 30/8/2013
+Long Treasury	  VUSTX	      14/12/1989 - 30/8/2013
+Short Treasury	VFSIX	      16/10/1997 - 300/8/2013
 
-The Gold data is supplemented from London PM fix data from Quandl up until 2005-11-31
-http://www.quandl.com/api/v1/datasets/OFDP/GOLD_2.csv?&trim_start=1993-01-01&trim_end=2005-11-31&sort_order=desc
+The Gold data is from London PM fix data from Quandl up until 2005-11-31
+http://www.quandl.com/api/v1/datasets/OFDP/GOLD_2.csv?&trim_start=1993-01-01&trim_end=2013-08-30&sort_order=desc
 
+Downloaded data
+---------------
 
 This is supplemented with the following index data downloaded using Thompson Reuters Eikon
 
                             Data Range
-Commodities     .SNCMPT     31/12/1999 - 28/02/2007
-Intl REIT       .DWXRTT     31/12/2004 - 31/03/2008
-US REIT         .DWRTFT     30/01/1987 - 30/06/1997
+Commodities     .SNCMPT     31/12/1999 - 30/08/2013
+Intl REIT       .DWXRTT     31/12/2004 - 30/08/2013
+
 
 
 
