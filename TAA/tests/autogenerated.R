@@ -1,12 +1,3 @@
-# UNIT TESTING
-# ===============================================
-
-data_backup <- data
-
-# Create some fake test data
-
-
-
 expect_that(helper.function(), equals(NULL))
 expect_that(calculateInstantaneousSlope(n.mom = NULL), equals(NULL))
 expect_that(calculatePercentileRank(n.mom = NULL), equals(NULL))

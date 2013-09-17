@@ -1,94 +1,15 @@
 #*****************************************************************
-# MOMENTUM FUNCTIONS
-# ==================
+# UTILITY FUNCTIONS
+# ================================
 #*****************************************************************
 # For these functions to run effectively, the environment must 
 # contain: 
 #  - data          (an SIT backtest environment)
-#  - prices        (xts - daily prices)
 #  - period.ends   (list of rebalance period indices to be applied to prices)  
-#  - slowfastratio (ratio between slow and fast SMA)
 #
 # Uses some code from https://github.com/systematicinvestor/SIT
 #*****************************************************************
 
-require(TTR)
-
-#*****************************************************************
-# Total return momentum 
-#*****************************************************************
-calculateTRMomentum <- function(n.mom) {
-  return((prices / mlag(prices, n.mom)) - 1)
-}
-
-#*****************************************************************
-# Total return less most recent month
-#*****************************************************************
-calculateTRx1Momentum <- function(n.mom) {
-  return((mlag(prices, 22) / mlag(prices, n.mom + 22)) - 1)
-}  
-
-#*****************************************************************
-# SMA differential
-#*****************************************************************
-calculateSMADifferential <- function(n.mom) {
-  smafast <- apply(prices, 2, function(x) { SMA(x, n.mom / slowfastratio) } )
-  smaslow <- apply(prices, 2, function(x) { SMA(x, n.mom) } ) 
-  return((smafast / smaslow) - 1)
-}
-
-#*****************************************************************
-# Price to SMA differential
-#*****************************************************************
-calculatePriceToSMADifferential <- function(n.mom) {
-  smaslow <- apply(prices, 2, function(x) { SMA(x, n.mom) } ) 
-  return((prices / smaslow) - 1)
-}
-
-#*****************************************************************
-# Instantaneous Slope
-# Daily rate of change of SMA 
-#*****************************************************************
-calculateInstantaneousSlope <- function(n.mom) {
-  smaslow <- apply(prices, 2, function(x) { SMA(x, n.mom) } )
-  return((smaslow / mlag(smaslow, 1) - 1))
-}
-
-#*****************************************************************
-# Percentile Rank
-# See: http://en.wikipedia.org/wiki/Percentile_rank
-#*****************************************************************
-calculatePercentileRank <- function(n.mom) {
-  return(apply(prices, 2, function(x) { runPercentRank(x, n.mom) } ))
-}
-
-#*****************************************************************
-# Z score
-# The magnitude that the current price deviates
-# from the average price over the period
-#*****************************************************************
-calculateZScore <- function(n.mom) {
-  zmean <- apply(prices, 2, function(x) { runMean(x, n.mom) } )
-  zsd <- apply(prices, 2, function(x) { runSD(x, n.mom) } )
-  return((prices - zmean) / zsd)
-}
-
-#*****************************************************************
-# Z distribution 
-# A transformation of the z score to a percentile value on the 
-# cumulative normal distribution
-#*****************************************************************
-calculateZDistribution <- function(n.mom) {
-  zmean <- apply(prices, 2, function(x) { runMean(x, n.mom) } )
-  zsd <- apply(prices, 2, function(x) { runSD(x, n.mom) } )
-  return(pnorm((prices - zmean) / zsd))
-}
-
-
-#******************************************************************
-# UTILITY FUNCTIONS
-# =================
-#******************************************************************
 
 #******************************************************************
 # Create standardised momentum measure over a range of lookback periods
@@ -130,10 +51,10 @@ standardiseMomentumOverLookbacks <- function(momentumfunc, momlookback) {
 #   
 #******************************************************************
 runEqualWeightBacktest <- function (
-    momentum.matrix, 
-    n.positions, 
-    accumulate = FALSE
-  ) {
+  momentum.matrix, 
+  n.positions, 
+  accumulate = FALSE
+) {
   
   data$weight[] <- NA
   data$weight[period.ends,] <- ntop(momentum.matrix[period.ends,], n.positions)
