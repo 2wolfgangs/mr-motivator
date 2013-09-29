@@ -13,18 +13,23 @@ accumulated.momentum <- NA
 mom.lookbacks <- c(1*22,3*22,6*22,9*22,12*22) 
 slowfastratio <- 10
 
-# Get prices from data environment
-prices <- data$prices  
+# Standardisation method
+std.type <- 'zdist'
 
-# Find period ends using SIT function
-period.ends <- endpoints(prices, 'months')
+# Get xts of combined prices from data environment
+price.data <- data$prices  
+n <- ncol(price.data)
+
+# Find period ends using xts endpoints function
+period.ends <- endpoints(price.data, 'months')
 period.ends <- period.ends[period.ends > 0]
 
 #*****************************************************************
 # Total return momentum 
 #*****************************************************************
 
-totalreturn <- standardiseMomentumOverLookbacks(function(x) calculateTRMomentum(x), mom.lookbacks)
+totalreturn <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateTRMomentum(x,y)
+                                                , price.data, mom.lookbacks)
 
 models$totalreturn2 <- runEqualWeightBacktest(totalreturn,2,TRUE)
 models$totalreturn3 <- runEqualWeightBacktest(totalreturn,3,TRUE)
@@ -34,7 +39,8 @@ models$totalreturn5 <- runEqualWeightBacktest(totalreturn,5,FALSE)
 #*****************************************************************
 # Total return less most recent month
 #******************************************************************
-trx1 <- standardiseMomentumOverLookbacks(function(x) calculateTRx1Momentum(x), mom.lookbacks) 
+trx1 <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateTRx1Momentum(x,y) 
+                                         , price.data, mom.lookbacks) 
 
 models$trx2 <- runEqualWeightBacktest(trx1,2,FALSE)
 models$trx3 <- runEqualWeightBacktest(trx1,3,FALSE)
@@ -44,7 +50,8 @@ models$trx5 <- runEqualWeightBacktest(trx1,5,FALSE)
 #*****************************************************************
 # SMA differential
 #*****************************************************************
-smadiff <- standardiseMomentumOverLookbacks(function(x) calculateSMADifferential(x), mom.lookbacks) 
+smadiff <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateSMADifferential(x,y)
+                                            , price.data, mom.lookbacks) 
 
 models$smadiff2 <- runEqualWeightBacktest(smadiff,2,TRUE)
 models$smadiff3 <- runEqualWeightBacktest(smadiff,3,TRUE)
@@ -54,7 +61,8 @@ models$smadiff5 <- runEqualWeightBacktest(smadiff,5,FALSE)
 #*****************************************************************
 # Price to SMA differential
 #*****************************************************************
-pricesmadiff <- standardiseMomentumOverLookbacks(function(x) calculatePriceToSMADifferential(x), mom.lookbacks) 
+pricesmadiff <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculatePriceToSMADifferential(x,y)
+                                                 , price.data, mom.lookbacks) 
 
 models$pricesmadiff2 <- runEqualWeightBacktest(pricesmadiff,2,TRUE)
 models$pricesmadiff3 <- runEqualWeightBacktest(pricesmadiff,3,TRUE)
@@ -65,7 +73,8 @@ models$pricesmadiff5 <- runEqualWeightBacktest(pricesmadiff,5,FALSE)
 # Instantaneous Slope
 # Daily rate of change of SMA 
 #*****************************************************************
-instslope <- standardiseMomentumOverLookbacks(function(x) calculateInstantaneousSlope(x), mom.lookbacks) 
+instslope <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateInstantaneousSlope(x,y)
+                                              , price.data, mom.lookbacks) 
 
 models$instslope2 <- runEqualWeightBacktest(instslope,2,TRUE)
 models$instslope3 <- runEqualWeightBacktest(instslope,3,TRUE)
@@ -76,7 +85,8 @@ models$instslope5 <- runEqualWeightBacktest(instslope,5,FALSE)
 # Percentile Rank
 # See: http://en.wikipedia.org/wiki/Percentile_rank
 #*****************************************************************
-percentrank <- standardiseMomentumOverLookbacks(function(x) calculatePercentileRank(x), mom.lookbacks) 
+percentrank <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculatePercentileRank(x,y)
+                                                , price.data, mom.lookbacks) 
 
 models$percentrank2 <- runEqualWeightBacktest(percentrank,2,FALSE)
 models$percentrank3 <- runEqualWeightBacktest(percentrank,3,FALSE)
@@ -88,7 +98,8 @@ models$percentrank5 <- runEqualWeightBacktest(percentrank,5,FALSE)
 # The magnitude that the current price deviates
 # from the average price over the period
 #*****************************************************************
-zscore <- standardiseMomentumOverLookbacks(function(x) calculateZScore(x), mom.lookbacks) 
+zscore <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateZScore(x,y)
+                                           , price.data, mom.lookbacks) 
 
 models$zscore2 <- runEqualWeightBacktest(zscore,2,FALSE)
 models$zscore3 <- runEqualWeightBacktest(zscore,3,FALSE)
@@ -100,7 +111,8 @@ models$zscore5 <- runEqualWeightBacktest(zscore,5,FALSE)
 # A transformation of the z score to a percentile value on the 
 # cumulative normal distribution
 #*****************************************************************
-zdist <- standardiseMomentumOverLookbacks(function(x) calculateZDistribution(x), mom.lookbacks) 
+zdist <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateZDistribution(x,y)
+                                          , price.data, mom.lookbacks) 
 
 models$zdist2 <- runEqualWeightBacktest(zdist,2,FALSE)
 models$zdist3 <- runEqualWeightBacktest(zdist,3,FALSE)
@@ -114,8 +126,15 @@ models$zdist5 <- runEqualWeightBacktest(zdist,5,FALSE)
 models$combo <- runComboBacktest()
 
 #*****************************************************************
+# Create benchmark porfolios
+#*****************************************************************
+# benchmarks <- runBenchmarkPortfolios()
+
+
+#*****************************************************************
 # Create Report
 #******************************************************************    
 models = rev(models)
 
 strategy.performance.snapshoot(models, T)
+# strategy.performance.snapshoot(benchmarks, T)

@@ -10,38 +10,13 @@
 # Uses some code from https://github.com/systematicinvestor/SIT
 #*****************************************************************
 
-
-#******************************************************************
-# Create standardised momentum measure over a range of lookback periods
-#******************************************************************
-# Args: 
-#   momentumfunc - Momentum function e.g. function(x) calculateZScore(x)
-#   momlookback  - vector containing momentum lookbacks
-#
-# Returns:
-#   xts containing cross sectional momentums, standardised over a 
-#   range of lookback periods
-#******************************************************************
-standardiseMomentumOverLookbacks <- function(momentumfunc, momlookback) {
-  stdmom <- 0 
-  for (look in momlookback[1:length(momlookback)]) {
-    moms <- momentumfunc(look)
-    # Standardised momentum
-    # abs(asset momentum) / abs(sum of all asset momentums) * sign of asset momentum
-    stmomentum <- (abs(moms) / abs(rowSums(moms, na.rm = TRUE))) * sign(moms)
-    stdmom <- stdmom + stmomentum
-  }  
-  # Return standardised momentum amount, normalised to 1 or -1
-  return(stdmom / length(momlookback))
-}
-
 #******************************************************************
 # Run Equal Weight Backtest with n.positions
 #******************************************************************
 #
 # Args:
 #   momentum.matrix - xts object containing momentums for each asset
-#                     such as those returned from StandardisedMomentum()
+#                     such as those returned from standardiseMomentumOverLookbacks()
 #   n.positions     - number of positions to hold (int) 
 #   accumulate      - set to TRUE to accumulate weights in global 
 #                     accumulated.weight object. Default is FALSE.
@@ -67,7 +42,7 @@ runEqualWeightBacktest <- function (
     }
   }
   
-  return(bt.run.share(data, clean.signal=F, trade.summary=T))
+  return(bt.run.share(data, clean.signal=F, trade.summary=F))
 }
 
 #******************************************************************
@@ -89,3 +64,63 @@ runComboBacktest <- function () {
   
   return(bt.run.share(data, clean.signal=F, trade.summary=T))
 }
+
+#******************************************************************
+# Run Benchmark Portfolios
+#******************************************************************
+#
+# Run backtest for equal weight and min correlation benchmark portfolios
+#
+# Returns:
+#   SIT backtest model environment
+#   
+#******************************************************************
+runBenchmarkPortfolios <- function (rebalanceperiod = 'months') {
+  
+  obj <- portfolio.allocation.helper(  data$prices, periodicity = rebalanceperiod,
+                                       min.risk.fns = list(EW=equal.weight.portfolio,
+                                                        RP=risk.parity.portfolio,
+                                                        MV=min.var.portfolio,
+                                                        MD=max.div.portfolio,
+                                                        MC=min.corr.portfolio,
+                                                        MC2=min.corr2.portfolio),
+                                       custom.stats.fn = 'portfolio.allocation.custom.stats'
+                                    ) 
+  
+  benchmark.models <- create.strategies(obj, data)$models
+  
+  return(benchmark.models)
+}
+
+#******************************************************************
+# Apply function to a matrix (usually xts)
+#******************************************************************
+#
+# Applies a function to a matrix.
+# (Mostly copied from bt.apply.matrix in SIT package)
+#
+# Args:
+#   matrix   - The matrix to apply the function to (usually xts)
+#   apply.function  -Function to apply
+#   ....     - Other parameters
+#
+# Returns:
+#   the results of applying the function to the matrix
+#   
+#******************************************************************
+applyFunctionToMatrix <- function(matrix, apply.function, ...) {
+  result <- matrix
+  result[] <- NA
+  n.cols <- ncol(matrix)
+  
+  for( i in 1:n.cols) {
+    msg <- try( match.fun(apply.function)( coredata(matrix[,i]),... ) , silent=TRUE)
+    if (class(msg)[1] != 'try-error') {
+      result[,i] = msg
+    } else {
+      cat(i, msg, '\n')
+    }
+  }
+  return(result)  
+}
+  
