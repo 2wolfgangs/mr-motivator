@@ -13,14 +13,14 @@ require(TTR,SIT)
 # Total return momentum 
 #*****************************************************************
 calculateTRMomentum <- function(prices, n.mom) {
-  return((prices / mlag(prices, n.mom)) - 1)
+  return((prices / lagMatrix(prices, n.mom)) - 1)
 }
 
 #*****************************************************************
 # Total return less most recent month
 #*****************************************************************
 calculateTRx1Momentum <- function(prices, n.mom) {
-  return((mlag(prices, 22) / mlag(prices, n.mom + 22)) - 1)
+  return((lagMatrix(prices, 22) / lagMatrix(prices, n.mom + 22)) - 1)
 }  
 
 #*****************************************************************
@@ -52,7 +52,7 @@ calculatePriceToSMADifferential <- function(prices, n.mom) {
 #*****************************************************************
 calculateInstantaneousSlope <- function(prices, n.mom) {
   smaslow <- applyFunctionToMatrix(prices, function(x) { SMA(x, n.mom) } )
-  return((smaslow / mlag(smaslow, 1) - 1))
+  return((smaslow / lagMatrix(smaslow, 1) - 1))
 }
 
 #*****************************************************************

@@ -9,6 +9,8 @@
 #
 # Uses some code from https://github.com/systematicinvestor/SIT
 #*****************************************************************
+require(SIT)
+require(PerformanceAnalytics)
 
 #******************************************************************
 # Run Equal Weight Backtest with n.positions
@@ -93,7 +95,7 @@ runBenchmarkPortfolios <- function (rebalanceperiod = 'months') {
 }
 
 #******************************************************************
-# Apply function to a matrix (usually xts)
+# Apply function to xts matrix 
 #******************************************************************
 #
 # Applies a function to a matrix.
@@ -123,4 +125,98 @@ applyFunctionToMatrix <- function(matrix, apply.function, ...) {
   }
   return(result)  
 }
+
+#******************************************************************
+# Apply time series function to xts matrix 
+#******************************************************************
+#
+# Applies a timeseries function to a matrix. Used instead of
+# applyFunctionToMatrix for PerformanceAnalytics functions
+# 
+#
+# Args:
+#   matrix   - The matrix to apply the function to (usually xts)
+#   apply.function  -Function to apply
+#   ....     - Other parameters
+#
+# Returns:
+#   the results of applying the function to the matrix
+#   
+#******************************************************************
+applyTSFunctionToMatrix <- function(matrix, apply.function, ...) {
+  result <- matrix
+  result[] <- NA
+  n.cols <- ncol(matrix)
   
+  for( i in 1:n.cols) {
+    msg <- try( match.fun(apply.function)( matrix[,i],... ) , silent=TRUE)
+    if (class(msg)[1] != 'try-error') {
+      result[-1,i] <- msg
+    } else {
+      cat(i, msg, '\n')
+    }
+  }
+  return(result)  
+}
+     
+#******************************************************************
+# Lag matrix 
+# (Copied from mlag in SIT package)
+#******************************************************************
+#
+# Moves elements in a matrix by a given lag value.
+# lagMatrix(m,1) will use yesterday's values
+#
+# Args:
+#   matrix   - The matrix to lag
+#   lag      - Number of values to lag by
+#
+# Returns:
+#   lagged matrix
+#   
+#******************************************************************
+lagMatrix <- function (matrix, lag) {
+  if( is.null(dim(matrix)) ) { 
+    lag <- len(matrix)
+    if(nlag > 0) {
+      matrix[(lag+1):n] <- matrix[1:(n-lag)]
+      matrix[1:lag] <- NA
+    } else if(lag < 0) {
+      matrix[1:(n+lag)] <- matrix[(1-lag):n]
+      matrix[(n+lag+1):n] <- NA
+    } 	
+    
+  } else {
+    n <- nrow(matrix)
+    if(lag > 0) {
+      matrix[(lag+1):n,] <- matrix[1:(n-lag),]
+      matrix[1:lag,] <- NA
+    } else if(lag < 0) {
+      matrix[1:(n+lag),] <- matrix[(1-lag):n,]
+      matrix[(n+lag+1):n,] <- NA
+    } 
+  }
+  return(matrix);
+}
+
+#******************************************************************
+# Get equity curve from price data
+#******************************************************************
+#
+# Returns normalised equity curves (with equity starting at 1)
+# for a price series
+#
+# Args:
+#   prices   - xts matrix of prices
+#   
+# Returns:
+#   matrix of equity curves
+#   
+#******************************************************************
+getEquityCurveFromPrices <- function(price.data) {
+  gross.returns <- CalculateReturns(price.data) + 1
+  gross.returns[1,] <- 1
+  equity <- cumprod(gross.returns)
+  return(equity)
+}
+

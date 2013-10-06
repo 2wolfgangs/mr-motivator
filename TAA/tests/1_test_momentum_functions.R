@@ -40,14 +40,14 @@ test_that("calculateSMADifferential works for multiple asset price series", {
   test.result <- merge(test.result, b.test.result)
   names(test.result) <- c('A.Close','B.Close')
   
-  slowfastratio <- 2
+  slowfastratio <<- 2
   tr.actual <- calculateSMADifferential(test.prices,4)
   
   expect_that(tr.actual, equals(test.result, tolerance = 0.00001))
 })
 
 #*************************************************
-# Test calculateSMADifferential()
+# Test calculatePriceToSMADifferential()
 #*************************************************
 test_that("calculatePriceToSMADifferential works for multiple asset price series", {
   a.test.result <- c(NA,NA,NA,0,0.6666667,0.3333333,-0.2,0.7391304,
