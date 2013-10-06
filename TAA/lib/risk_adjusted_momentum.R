@@ -81,6 +81,66 @@ calculateVaRRAM <- function(prices, n.mom) {
   return (var)
 }
 
+#*****************************************************************
+# Conditional Value at Risk
+# This is the return over Value at Risk.
+# Effectively, this is the sharpe ratio, with ES (cVaR) as the denominator
+#*****************************************************************
+calculateCVaRRAM <- function(prices, n.mom) {
+  rtn <- CalculateReturns(prices)
+  var <- applyTSFunctionToMatrix(rtn, function(x) {
+    apply.rolling(x, width=n.mom, FUN="calculateSharpeCVaR") 
+  }) 
+  return (var)
+}
+
+#*****************************************************************
+# Return to max loss
+# This is the return over the minimum daily return
+#*****************************************************************
+calculateMaxLossRAM <- function(prices, n.mom) {
+  rtn <- CalculateReturns(prices)
+  mean <- applyFunctionToMatrix(rtn, function(x) { runMean(x, n.mom) })
+  maxloss <- applyFunctionToMatrix(rtn, function(x) { runMin(x, n.mom) })   
+  return (mean / abs(maxloss))
+}
+
+#*****************************************************************
+# Return to average drawdown
+# This is the return over the average drawdown 
+#*****************************************************************
+calculateMaxLossRAM <- function(prices, n.mom) {
+  rtn <- CalculateReturns(prices)
+  mean <- applyFunctionToMatrix(rtn, function(x) { runMean(x, n.mom) })
+  average.drawdown <- applyTSFunctionToMatrix(rtn, function(x) {
+    apply.rolling(x, width=n.mom, FUN="AverageDrawdown") 
+  })    
+  return (mean / average.drawdown)
+}
+
+# TODO: High-Low Differential 
+
+#*****************************************************************
+# Ulcer index
+# From PerformanceAnalytics package documentation...
+# "This is similar to drawdown deviation except that the impact of the 
+#  duration of drawdowns is incorporated by selecting the negative
+#  return for each period below the previous peak or high water mark. 
+#  The impact of long, deep drawdowns will have significant impact 
+#  because the underperformance since the last peak is squared."
+#*****************************************************************
+calculateUlcerRAM <- function(prices, n.mom) {
+  rtn <- CalculateReturns(prices)
+  ulcer <- applyTSFunctionToMatrix(rtn, function(x) {
+    apply.rolling(x, width=n.mom, FUN="UlcerIndex") 
+  })    
+  return (ulcer)
+}
+
+# TODO: Gain to Pain Ratio
+
+# TODO: Fractal Efficiency
+
 
 #*****************************************************************
 # UTILITY FUNCTIONS
@@ -99,3 +159,4 @@ calculateSharpeVaR <- function(price.data) {
 calculateSharpeCVaR <- function(price.data) {
   return(SharpeRatio(price.data, FUN="ES"))
 }
+
