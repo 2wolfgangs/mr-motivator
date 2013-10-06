@@ -137,10 +137,18 @@ calculateUlcerRAM <- function(prices, n.mom) {
   return (ulcer)
 }
 
-# TODO: Gain to Pain Ratio
-
-# TODO: Fractal Efficiency
-
+#*****************************************************************
+# Gain to Pain Ratio
+# This is the sum of returns over the absolute value of the sum of
+# losses
+#*****************************************************************
+calculateGainToPainRAM <- function(prices, n.mom) {
+  rtn <- CalculateReturns(prices)
+  negative.returns <- (0 - rtn) * (rtn < 0)
+  return.sum <- applyFunctionToMatrix(rtn, function(x) { runSum(x, n.mom) } )
+  negative.sum <- applyFunctionToMatrix(negative.returns, function(x) { runSum(x, n.mom) } )
+  return (return.sum / negative.sum)
+}
 
 #*****************************************************************
 # UTILITY FUNCTIONS
