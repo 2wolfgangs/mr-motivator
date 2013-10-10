@@ -88,3 +88,22 @@ standardiseZDistribution <- function(input.momentum) {
   return(pnorm(standardiseZScore(input.momentum)))
 }
 
+#******************************************************************
+# Create momentum measure over all assets
+#******************************************************************
+# Args: 
+#   std.method      - Standardise method c('gaussian')
+#   momentum.data   - time series object containing price data
+#   momlookback     - vector containing momentum lookbacks
+#
+# Returns:
+#   xts containing cross sectional momentums, standardised over all 
+#   assets
+#******************************************************************
+standardiseMomentumAcrossAssets <- function(std.method = 'gaussian', momentum.data) {
+  if (std.method == 'gaussian') {
+    std.mom <- pnorm()
+    return(pnorm((momentum.data - rowMeans(momentum.data, na.rm = TRUE)) 
+                 / apply(momentum.data, 1, function(x) {sd(x, na.rm = TRUE)})))  
+  }
+}

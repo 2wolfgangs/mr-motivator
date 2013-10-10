@@ -31,10 +31,10 @@ period.ends <- period.ends[period.ends > 0]
 totalreturn <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateTRMomentum(x,y)
                                                 , price.data, mom.lookbacks)
 
-models$totalreturn2 <- runEqualWeightBacktest(totalreturn,2,TRUE)
-models$totalreturn3 <- runEqualWeightBacktest(totalreturn,3,TRUE)
-models$totalreturn4 <- runEqualWeightBacktest(totalreturn,4,TRUE)
-models$totalreturn5 <- runEqualWeightBacktest(totalreturn,5,FALSE)
+models$totalreturn2 <- runEqualWeightBacktest(totalreturn,2,0,TRUE)
+models$totalreturn3 <- runEqualWeightBacktest(totalreturn,3,0,TRUE)
+models$totalreturn4 <- runEqualWeightBacktest(totalreturn,4,0,TRUE)
+models$totalreturn5 <- runEqualWeightBacktest(totalreturn,5,0,FALSE)
 
 #*****************************************************************
 # Total return less most recent month
@@ -42,10 +42,10 @@ models$totalreturn5 <- runEqualWeightBacktest(totalreturn,5,FALSE)
 trx1 <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateTRx1Momentum(x,y) 
                                          , price.data, mom.lookbacks) 
 
-models$trx2 <- runEqualWeightBacktest(trx1,2,FALSE)
-models$trx3 <- runEqualWeightBacktest(trx1,3,FALSE)
-models$trx4 <- runEqualWeightBacktest(trx1,4,FALSE)
-models$trx5 <- runEqualWeightBacktest(trx1,5,FALSE)
+models$trx2 <- runEqualWeightBacktest(trx1,2,0,FALSE)
+models$trx3 <- runEqualWeightBacktest(trx1,3,0,FALSE)
+models$trx4 <- runEqualWeightBacktest(trx1,4,0,FALSE)
+models$trx5 <- runEqualWeightBacktest(trx1,5,0,FALSE)
 
 #*****************************************************************
 # SMA differential
@@ -53,10 +53,10 @@ models$trx5 <- runEqualWeightBacktest(trx1,5,FALSE)
 smadiff <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateSMADifferential(x,y)
                                             , price.data, mom.lookbacks) 
 
-models$smadiff2 <- runEqualWeightBacktest(smadiff,2,TRUE)
-models$smadiff3 <- runEqualWeightBacktest(smadiff,3,TRUE)
-models$smadiff4 <- runEqualWeightBacktest(smadiff,4,TRUE)
-models$smadiff5 <- runEqualWeightBacktest(smadiff,5,FALSE)
+models$smadiff2 <- runEqualWeightBacktest(smadiff,2,0,TRUE)
+models$smadiff3 <- runEqualWeightBacktest(smadiff,3,0,TRUE)
+models$smadiff4 <- runEqualWeightBacktest(smadiff,4,0,TRUE)
+models$smadiff5 <- runEqualWeightBacktest(smadiff,5,0,FALSE)
 
 #*****************************************************************
 # Price to SMA differential
@@ -64,10 +64,10 @@ models$smadiff5 <- runEqualWeightBacktest(smadiff,5,FALSE)
 pricesmadiff <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculatePriceToSMADifferential(x,y)
                                                  , price.data, mom.lookbacks) 
 
-models$pricesmadiff2 <- runEqualWeightBacktest(pricesmadiff,2,TRUE)
-models$pricesmadiff3 <- runEqualWeightBacktest(pricesmadiff,3,TRUE)
-models$pricesmadiff4 <- runEqualWeightBacktest(pricesmadiff,4,TRUE)
-models$pricesmadiff5 <- runEqualWeightBacktest(pricesmadiff,5,FALSE)
+models$pricesmadiff2 <- runEqualWeightBacktest(pricesmadiff,2,0,TRUE)
+models$pricesmadiff3 <- runEqualWeightBacktest(pricesmadiff,3,0,TRUE)
+models$pricesmadiff4 <- runEqualWeightBacktest(pricesmadiff,4,0,TRUE)
+models$pricesmadiff5 <- runEqualWeightBacktest(pricesmadiff,5,0,FALSE)
 
 #*****************************************************************
 # Instantaneous Slope
@@ -76,10 +76,10 @@ models$pricesmadiff5 <- runEqualWeightBacktest(pricesmadiff,5,FALSE)
 instslope <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateInstantaneousSlope(x,y)
                                               , price.data, mom.lookbacks) 
 
-models$instslope2 <- runEqualWeightBacktest(instslope,2,TRUE)
-models$instslope3 <- runEqualWeightBacktest(instslope,3,TRUE)
-models$instslope4 <- runEqualWeightBacktest(instslope,4,TRUE)
-models$instslope5 <- runEqualWeightBacktest(instslope,5,FALSE)
+models$instslope2 <- runEqualWeightBacktest(instslope,2,0,TRUE)
+models$instslope3 <- runEqualWeightBacktest(instslope,3,0,TRUE)
+models$instslope4 <- runEqualWeightBacktest(instslope,4,0,TRUE)
+models$instslope5 <- runEqualWeightBacktest(instslope,5,0,FALSE)
 
 #*****************************************************************
 # Percentile Rank
@@ -88,10 +88,10 @@ models$instslope5 <- runEqualWeightBacktest(instslope,5,FALSE)
 percentrank <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculatePercentileRank(x,y)
                                                 , price.data, mom.lookbacks) 
 
-models$percentrank2 <- runEqualWeightBacktest(percentrank,2,FALSE)
-models$percentrank3 <- runEqualWeightBacktest(percentrank,3,FALSE)
-models$percentrank4 <- runEqualWeightBacktest(percentrank,4,FALSE)
-models$percentrank5 <- runEqualWeightBacktest(percentrank,5,FALSE)
+models$percentrank2 <- runEqualWeightBacktest(percentrank,2,0,FALSE)
+models$percentrank3 <- runEqualWeightBacktest(percentrank,3,0FALSE)
+models$percentrank4 <- runEqualWeightBacktest(percentrank,4,0,FALSE)
+models$percentrank5 <- runEqualWeightBacktest(percentrank,5,0,FALSE)
 
 #*****************************************************************
 # Z score
@@ -101,10 +101,10 @@ models$percentrank5 <- runEqualWeightBacktest(percentrank,5,FALSE)
 zscore <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateZScore(x,y)
                                            , price.data, mom.lookbacks) 
 
-models$zscore2 <- runEqualWeightBacktest(zscore,2,FALSE)
-models$zscore3 <- runEqualWeightBacktest(zscore,3,FALSE)
-models$zscore4 <- runEqualWeightBacktest(zscore,4,FALSE)
-models$zscore5 <- runEqualWeightBacktest(zscore,5,FALSE)
+models$zscore2 <- runEqualWeightBacktest(zscore,2,0,FALSE)
+models$zscore3 <- runEqualWeightBacktest(zscore,3,0,FALSE)
+models$zscore4 <- runEqualWeightBacktest(zscore,4,0,FALSE)
+models$zscore5 <- runEqualWeightBacktest(zscore,5,0,FALSE)
 
 #*****************************************************************
 # Z distribution 
@@ -114,10 +114,10 @@ models$zscore5 <- runEqualWeightBacktest(zscore,5,FALSE)
 zdist <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateZDistribution(x,y)
                                           , price.data, mom.lookbacks) 
 
-models$zdist2 <- runEqualWeightBacktest(zdist,2,FALSE)
-models$zdist3 <- runEqualWeightBacktest(zdist,3,FALSE)
-models$zdist4 <- runEqualWeightBacktest(zdist,4,FALSE)
-models$zdist5 <- runEqualWeightBacktest(zdist,5,FALSE)
+models$zdist2 <- runEqualWeightBacktest(zdist,2,0,FALSE)
+models$zdist3 <- runEqualWeightBacktest(zdist,3,0,FALSE)
+models$zdist4 <- runEqualWeightBacktest(zdist,4,0,FALSE)
+models$zdist5 <- runEqualWeightBacktest(zdist,5,0,FALSE)
 
 #*****************************************************************
 # Equal weighted portfolio backtest

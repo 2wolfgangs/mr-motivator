@@ -19,7 +19,9 @@ require(PerformanceAnalytics)
 # Args:
 #   momentum.matrix - xts object containing momentums for each asset
 #                     such as those returned from standardiseMomentumOverLookbacks()
-#   n.positions     - number of positions to hold (int) 
+#   n.positions     - max number of positions to hold. Default is 0 (no restrictions) 
+#   filter          - threshold for gaussian-normalised momentum score.
+#                     Default is 0 (no filter)
 #   accumulate      - set to TRUE to accumulate weights in global 
 #                     accumulated.weight object. Default is FALSE.
 #
@@ -29,13 +31,14 @@ require(PerformanceAnalytics)
 #******************************************************************
 runEqualWeightBacktest <- function (
   momentum.matrix, 
-  n.positions, 
+  n.positions = 0, 
+  gaussian.filter = 0,
   accumulate = FALSE
 ) {
   
   data$weight[] <- NA
   data$weight[period.ends,] <- ntop(momentum.matrix[period.ends,], n.positions)
-  
+    
   if(accumulate) {
     if(!exists('accumulated.weight')) {
       accumulated.weight <<- data$weight
@@ -131,8 +134,9 @@ applyFunctionToMatrix <- function(matrix, apply.function, ...) {
 #******************************************************************
 #
 # Applies a timeseries function to a matrix. Used instead of
-# applyFunctionToMatrix for PerformanceAnalytics functions
-# 
+# applyFunctionToMatrix for PerformanceAnalytics functions.
+# This does some hackery to line up the result set nicely.
+# (Mostly copied from bt.apply.matrix in SIT package)
 #
 # Args:
 #   matrix   - The matrix to apply the function to (usually xts)
@@ -147,11 +151,18 @@ applyTSFunctionToMatrix <- function(matrix, apply.function, ...) {
   result <- matrix
   result[] <- NA
   n.cols <- ncol(matrix)
+  n.rows <- nrow(matrix)
   
   for( i in 1:n.cols) {
     msg <- try( match.fun(apply.function)( matrix[,i],... ) , silent=TRUE)
     if (class(msg)[1] != 'try-error') {
-      result[-1,i] <- msg
+      # We assume that we only have NAs at the start of the price series
+      # So we use the number of rows in the result vector to calculate an
+      # offset by which we can line up the data.
+      # TODO: There's surely a better way of doing this...
+      result.rows <- nrow(msg)
+      offset <- n.rows - result.rows + 1
+      result[offset:n.rows,i] <- msg
     } else {
       cat(i, msg, '\n')
     }

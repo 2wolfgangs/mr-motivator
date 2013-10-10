@@ -47,7 +47,7 @@ for (i in ls(data)) {
 
 # Prepare the SIT backtesting environment using bt.prep function
 # --------------------------------------------------------------
-bt.prep(data, align='keep.all', dates='1993:12::')
+bt.prep(data, align='keep.all', dates='1994:12::')
 
 # In aligning all the data, we've now introduced some NAs into the data. 
 # We're going to carry the last value forward, to remove the NAs.

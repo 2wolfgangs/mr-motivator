@@ -46,6 +46,7 @@ calculateSortinoRAM <- function(prices, n.mom) {
 #*****************************************************************
 calculateCalmarRAM <- function(prices, n.mom) {
   rtn <- CalculateReturns(prices)
+  
   calmar <- applyTSFunctionToMatrix(rtn, function(x) {
     apply.rolling(x, width=n.mom, FUN="CalmarRatio") 
   })   
@@ -60,7 +61,7 @@ calculateCalmarRAM <- function(prices, n.mom) {
 calculateDVRRAM <- function(prices, n.mom) {
   sharpe <- calculateSharpeRAM(prices, n.mom)
   equity.curves <- getEquityCurveFromPrices(prices)
-  x <- as.double(index.xts(equity))
+  x <- as.double(index.xts(equity.curves))
   y <- equity.curves
   rsquared <- applyFunctionToMatrix(y, function(y) {
     runCov(y,x,n.mom)
