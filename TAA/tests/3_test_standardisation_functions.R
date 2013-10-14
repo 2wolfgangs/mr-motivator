@@ -66,3 +66,20 @@ test_that("standardiseZDistribution works for multiple asset price series", {
   expect_that(tr.actual, equals(test.result, tolerance = 0.00001))
 })
 
+#*************************************************
+# Test standardiseMomentumAcrossAssets()
+#*************************************************
+test_that("standardiseMomentumAcrossAssets works for multiple asset price series", {
+  a.test.result <- c(0.1948654,0.3007845)
+  b.test.result <- c(0.06919,0.461138)
+  c.test.result <- c(0.2753125,0.1597529)
+  d.test.result <- c(0.4606323,0.078325)
+  test.result <- xts(a.test.result,dates)
+  test.result <- merge(test.result, b.test.result, c.test.result,
+                       d.test.result)
+  names(test.result) <- c('A','B','C','D')
+  
+  tr.actual <- standardiseMomentumAcrossAssets(test.mom)
+  
+  expect_that(tr.actual, equals(test.result, tolerance = 0.00001))
+})

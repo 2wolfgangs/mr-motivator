@@ -1,0 +1,15 @@
+Gate 1 Criteria
+===============
+
+- Asset instrument universe identified
+- Backtest over asset instrument universe with
+    - CAGR over 15%
+    - MaxDD under 12%
+    - Portfolio Turnover under X%
+- Higher Sharpe ratio and DVR for all 6 asset universes for all benchmarks
+    - Equal Weight
+    - Risk Parity
+    - Minimum Variance
+    - Max Diversification
+    - Min Correlation
+    - MinCorr2

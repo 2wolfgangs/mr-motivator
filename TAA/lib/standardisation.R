@@ -100,10 +100,14 @@ standardiseZDistribution <- function(input.momentum) {
 #   xts containing cross sectional momentums, standardised over all 
 #   assets
 #******************************************************************
-standardiseMomentumAcrossAssets <- function(std.method = 'gaussian', momentum.data) {
+standardiseMomentumAcrossAssets <- function(momentum.data, std.method = 'gaussian') {
+  # TODO: Follow same convention (abs, z-score, z-dist, percentile rank etc.) as above
   if (std.method == 'gaussian') {
-    std.mom <- pnorm()
-    return(pnorm((momentum.data - rowMeans(momentum.data, na.rm = TRUE)) 
-                 / apply(momentum.data, 1, function(x) {sd(x, na.rm = TRUE)})))  
-  }
+    # Gaussian normalisation
+    normalised.mom <- standardiseZDistribution(momentum.data)
+  } 
+  
+  # Releverage such that momentum across all assets adds to one.
+  # releveraged.mom <- normalised.mom / rowSums(normalised.mom, na.rm = TRUE)   
+  return(normalised.mom)
 }

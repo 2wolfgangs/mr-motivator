@@ -20,7 +20,7 @@ require(PerformanceAnalytics)
 #   momentum.matrix - xts object containing momentums for each asset
 #                     such as those returned from standardiseMomentumOverLookbacks()
 #   n.positions     - max number of positions to hold. Default is 0 (no restrictions) 
-#   filter          - threshold for gaussian-normalised momentum score.
+#   filter.threshold- threshold for gaussian-normalised momentum score.
 #                     Default is 0 (no filter)
 #   accumulate      - set to TRUE to accumulate weights in global 
 #                     accumulated.weight object. Default is FALSE.
@@ -32,13 +32,30 @@ require(PerformanceAnalytics)
 runEqualWeightBacktest <- function (
   momentum.matrix, 
   n.positions = 0, 
-  gaussian.filter = 0,
+  filter.threshold = 0,
   accumulate = FALSE
 ) {
   
+  # If we've passed in 0 at the number of positions, we want to equal weight all assets.
+  # So set n.positions to the number of columns in momentum.matrix
+  if (n.positions == 0) {
+    n.positions <- ncol(momentum.matrix)
+  }
+  
+  # Equal weight top n assets at the period.end re-balancing points
   data$weight[] <- NA
   data$weight[period.ends,] <- ntop(momentum.matrix[period.ends,], n.positions)
-    
+  
+  # Apply filter if we have one
+  if (filter.threshold != 0) {
+    normalised.momentum <- standardiseMomentumAcrossAssets(momentum.matrix)
+    filtered.mom <- normalised.momentum > filter.threshold
+    # Set weights to zero where the normalised momentum is below filter value
+    data$weight <- data$weight * filtered.mom
+    # Now releverage the weights to 1
+    data$weight <- data$weight / rowSums(data$weight, na.rm = TRUE)
+  }
+          
   if(accumulate) {
     if(!exists('accumulated.weight')) {
       accumulated.weight <<- data$weight
@@ -49,6 +66,62 @@ runEqualWeightBacktest <- function (
   
   return(bt.run.share(data, clean.signal=F, trade.summary=F))
 }
+
+#******************************************************************
+# Run Momenutm Weighted Backtest with n.positions
+#******************************************************************
+#
+# Args:
+#   momentum.matrix - xts object containing momentums for each asset
+#                     such as those returned from standardiseMomentumOverLookbacks()
+#   n.positions     - max number of positions to hold. Default is 0 (no restrictions) 
+#   filter.threshold- threshold for gaussian-normalised momentum score.
+#                     Default is 0 (no filter)
+#   accumulate      - set to TRUE to accumulate weights in global 
+#                     accumulated.weight object. Default is FALSE.
+#
+# Returns:
+#   SIT backtest model environment
+#   
+#******************************************************************
+runMomentumWeightedBacktest <- function (
+  momentum.matrix, 
+  n.positions = 0, 
+  filter.threshold = 0,
+  accumulate = FALSE
+) {
+  
+  # If we've passed in 0 at the number of positions, we want to equal weight all assets.
+  # So set n.positions to the number of columns in momentum.matrix
+  if (n.positions == 0) {
+    n.positions <- ncol(momentum.matrix)
+  }
+  
+  # Equal weight top n assets at the period.end re-balancing points
+  data$weight[] <- NA
+  data$weight[period.ends,] <- ntop(momentum.matrix[period.ends,], n.positions)
+  
+  # Apply filter if we have one
+  if (filter.threshold != 0) {
+    normalised.momentum <- standardiseMomentumAcrossAssets(momentum.matrix)
+    filtered.mom <- normalised.momentum > filter.threshold
+    # Set weights to zero where the normalised momentum is below filter value
+    data$weight <- data$weight * filtered.mom * normalised.momentum
+    # Now releverage the weights to 1
+    data$weight <- data$weight / rowSums(data$weight, na.rm = TRUE)
+  }
+  
+  if(accumulate) {
+    if(!exists('accumulated.weight')) {
+      accumulated.weight <<- data$weight
+    } else {
+      accumulated.weight <<- accumulated.weight + data$weight
+    }
+  }
+  
+  return(bt.run.share(data, clean.signal=F, trade.summary=F))
+}
+
 
 #******************************************************************
 # Run Backtest for equal weighted combo portfolio

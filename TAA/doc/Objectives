@@ -1,0 +1,13 @@
+Objectives
+===============
+
+- 100% Systematic investment plan
+- Re-balanced on a monthly basis (once a month trades only)
+- Backtested for overperformance over passive benchmarks over all tested asset universes
+- Minimal optimisation to avoid overfit
+- Easy to implement
+- Target risk-adjusted metrics:
+  - Target Returns (CAGR) 10%
+  - Target Volatility 12%
+  - Target MaxDD 15%
+  - Target Portfolio Turnover X%

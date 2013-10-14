@@ -89,7 +89,7 @@ percentrank <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculat
                                                 , price.data, mom.lookbacks) 
 
 models$percentrank2 <- runEqualWeightBacktest(percentrank,2,0,FALSE)
-models$percentrank3 <- runEqualWeightBacktest(percentrank,3,0FALSE)
+models$percentrank3 <- runEqualWeightBacktest(percentrank,3,0,FALSE)
 models$percentrank4 <- runEqualWeightBacktest(percentrank,4,0,FALSE)
 models$percentrank5 <- runEqualWeightBacktest(percentrank,5,0,FALSE)
 
