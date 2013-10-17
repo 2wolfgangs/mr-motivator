@@ -6,11 +6,12 @@ library('ProjectTemplate')
 load.project()
 
 # Set version of data to run over
-data <- data.6
+data <- data.3
   
 # Reset variables in case we've run before.
 models <- list()
-accumulated.momentum <- NA
+if (exists('accumulated.momentum')) rm(accumulated.momentum)
+if (exists('accumulated.weight')) rm(accumulated.weight)
 
 # Momentum lookback (1,3,6,9,12 months)
 mom.lookbacks <- c(1*22,3*22,6*22,9*22,12*22) 
@@ -34,7 +35,7 @@ period.ends <- period.ends[period.ends > 0]
 totalreturn <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateTRMomentum(x,y)
                                                 , price.data, mom.lookbacks)
 
-models$totalreturn <- runMomentumWeightedBacktest(totalreturn,0,0.8,TRUE)
+models$totalreturn <- runMomentumWeightedBacktest(totalreturn,0,0,TRUE)
 
 #*****************************************************************
 # Total return less most recent month
@@ -50,7 +51,7 @@ models$totalreturn <- runMomentumWeightedBacktest(totalreturn,0,0.8,TRUE)
 smadiff <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateSMADifferential(x,y)
                                             , price.data, mom.lookbacks) 
 
-models$smadiff <- runMomentumWeightedBacktest(smadiff,0,0.8,TRUE)
+models$smadiff <- runMomentumWeightedBacktest(smadiff,0,0,TRUE)
 
 #*****************************************************************
 # Price to SMA differential
@@ -58,7 +59,7 @@ models$smadiff <- runMomentumWeightedBacktest(smadiff,0,0.8,TRUE)
 pricesmadiff <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculatePriceToSMADifferential(x,y)
                                                  , price.data, mom.lookbacks) 
 
-models$pricesmadiff <- runMomentumWeightedBacktest(pricesmadiff,0,0.8,TRUE)
+models$pricesmadiff <- runMomentumWeightedBacktest(pricesmadiff,0,0,TRUE)
 
 #*****************************************************************
 # Instantaneous Slope
@@ -67,7 +68,7 @@ models$pricesmadiff <- runMomentumWeightedBacktest(pricesmadiff,0,0.8,TRUE)
 instslope <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateInstantaneousSlope(x,y)
                                               , price.data, mom.lookbacks) 
 
-models$instslope <- runMomentumWeightedBacktest(instslope,0,0.8,TRUE)
+models$instslope <- runMomentumWeightedBacktest(instslope,0,0,TRUE)
 
 #*****************************************************************
 # Percentile Rank
@@ -105,7 +106,7 @@ models$instslope <- runMomentumWeightedBacktest(instslope,0,0.8,TRUE)
 sharpe <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateSharpeRAM(x,y)
                                            , price.data, mom.lookbacks)
 
-models$sharpe <- runMomentumWeightedBacktest(sharpe,0,0.8,TRUE)
+models$sharpe <- runMomentumWeightedBacktest(sharpe,0,0,TRUE)
 
 #*****************************************************************
 # Omega Ratio
@@ -113,7 +114,7 @@ models$sharpe <- runMomentumWeightedBacktest(sharpe,0,0.8,TRUE)
 omega <- standardiseMomentumOverLookbacks(std.type, function(x,y) calculateOmegaRAM(x,y) 
                                           , price.data, mom.lookbacks) 
 
-models$omega <- runMomentumWeightedBacktest(omega,0,0.8,TRUE)
+models$omega <- runMomentumWeightedBacktest(omega,0,0,TRUE)
 
 
 #*****************************************************************
